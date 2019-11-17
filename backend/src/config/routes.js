@@ -8,5 +8,5 @@ module.exports = function(server) {
 
     // TODO
     const todoService = require('../api/todo/todoService')
-    todoService.register(router, '/todo')
+    todoService.register(router, '/todos')
 }

@@ -1,11 +1,8 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendarCheck } from "@fortawesome/free-solid-svg-icons";
 import { Nav, Navbar, NavItem } from 'react-bootstrap'
 import { Link, NavLink } from 'react-router-dom';
-
-import Todo from '../todo/Todo'
-import About from '../about/About';
 
 export default props => (
   <Navbar bg="dark" variant="dark" expand="lg">
