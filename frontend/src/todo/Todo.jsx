@@ -22,10 +22,11 @@ export default class Todo extends Component {
     console.log(this.state.list)
   }
 
-  refresh = async () => {
-    await axios.get(`${URL}?sort=-createdAt`)
+  refresh = async (description = '') => {
+    const search =  description ? `&description__regex=/${description}/` : ''
+    await axios.get(`${URL}?sort=-createdAt${search}`)
       .then(
-        response => this.setState({ list: response.data, description: '' })
+        response => this.setState({ list: response.data, description })
       )
   }
 
@@ -37,10 +38,10 @@ export default class Todo extends Component {
     
   }
 
-  handleAdd = () => {
+  handleAdd = async () => {
     const description = this.state.description
-    axios.post(URL, { description })
-      .then(response => this.refresh())
+    await axios.post(URL, { description })
+    this.refresh()
   }
   
   handleChange = (e) => {
@@ -48,9 +49,13 @@ export default class Todo extends Component {
   }
 
   handleMarkAsDone = async (todo) => {
-    const response = await axios.put(`${URL}/${todo._id}`, 
+    await axios.put(`${URL}/${todo._id}`, 
     {...todo, done: !todo.done ? true : false})
     this.refresh()
+  }
+
+  handleSearch = () => {
+    this.refresh(this.state.description)
   }
 
   render() {
@@ -60,6 +65,7 @@ export default class Todo extends Component {
           <TodoForm 
             description={this.state.description}
             handleChange={this.handleChange}
+            handleSearch={this.handleSearch}
             handleAdd={this.handleAdd} />
           <TodoList 
             handleRemove={this.handleRemove}

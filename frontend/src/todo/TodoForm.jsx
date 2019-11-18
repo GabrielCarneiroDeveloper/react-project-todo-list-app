@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faSearch } from '@fortawesome/free-solid-svg-icons';
 
 import { 
     Form,
@@ -13,6 +13,14 @@ import {
 import './TodoForm.css'
 
 export default props => {
+
+  const keyHandler = e => {
+    if (e.key === 'Enter') {
+      e.shiftKey ? props.handleSearch() : props.handleAdd() 
+    } else if (e.key === 'Escape' & !props.description) {
+      props.handleSearch()
+    }
+  }
   
   return (
     <Form className="todo-form mb-3">
@@ -23,10 +31,16 @@ export default props => {
           aria-describedby="basic-addon2"
           onChange={props.handleChange}
           value={props.description}
+          onKeyUp={keyHandler}
         />
         <InputGroup.Append>
           <Button onClick={props.handleAdd}>
             <FontAwesomeIcon icon={faPlus} />
+          </Button>
+        </InputGroup.Append>
+        <InputGroup.Append>
+          <Button variant='info' onClick={props.handleSearch}>
+            <FontAwesomeIcon icon={faSearch} />
           </Button>
         </InputGroup.Append>
       </InputGroup>
