@@ -1,7 +1,10 @@
-import React from 'react'
+import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPlus, faSearch } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faSearch, faWindowClose } from '@fortawesome/free-solid-svg-icons';
+import { changeDescription, search, add, clean } from "./todoActions";
 
 import { 
     Form,
@@ -12,62 +15,66 @@ import {
 
 import './TodoForm.css'
 
-export default props => {
 
-  const keyHandler = e => {
+
+class TodoForm extends Component {
+
+  componentDidMount() {
+    this.props.search()
+  }
+
+  keyHandler = e => {
+
+    const { add, search, description } = this.props
     if (e.key === 'Enter') {
-      e.shiftKey ? props.handleSearch() : props.handleAdd() 
-    } else if (e.key === 'Escape' & !props.description) {
-      props.handleSearch()
+      e.shiftKey ? search() : add(description); 
+    } else if (e.key === 'Escape' & !description) {
+      search()
     }
   }
   
-  return (
-    <Form className="todo-form mb-3">
-      <InputGroup>
-        <FormControl
-          placeholder="Add a task"
-          aria-label="Add a task"
-          aria-describedby="basic-addon2"
-          onChange={props.handleChange}
-          value={props.description}
-          onKeyUp={keyHandler}
-        />
-        <InputGroup.Append>
-          <Button onClick={props.handleAdd}>
-            <FontAwesomeIcon icon={faPlus} />
-          </Button>
-        </InputGroup.Append>
-        <InputGroup.Append>
-          <Button variant='info' onClick={props.handleSearch}>
-            <FontAwesomeIcon icon={faSearch} />
-          </Button>
-        </InputGroup.Append>
-      </InputGroup>
-    </Form>
-  );
+  render() {
+    //state
+    const { description } = this.props
+    //action creator
+    const { add, search, clean } = this.props;
+
+    return (
+      <Form className="todo-form mb-3">
+        <InputGroup>
+          <FormControl
+            placeholder="Add a task"
+            aria-label="Add a task"
+            aria-describedby="basic-addon2"
+            onChange={this.props.changeDescription}
+            value={this.props.description}
+            onKeyUp={this.keyHandler}
+          />
+          <InputGroup.Append>
+            <Button onClick={() => add(description)}>
+              <FontAwesomeIcon icon={faPlus} />
+            </Button>
+          </InputGroup.Append>
+          <InputGroup.Append>
+            <Button variant="info" onClick={search}>
+              <FontAwesomeIcon icon={faSearch} />
+            </Button>
+          </InputGroup.Append>
+          <InputGroup.Append>
+            <Button variant="" onClick={clean}>
+              <FontAwesomeIcon icon={faWindowClose} />
+            </Button>
+          </InputGroup.Append>
+        </InputGroup>
+      </Form>
+    );
+  }
 }
   
+const mapStateToProps = store => ({
+  description: store.todo.description
+});
+const mapDispatchToProps = dispatch =>
+  bindActionCreators({ changeDescription, search, add, clean }, dispatch);
 
-  //   <div
-  //     role="form"
-  //     className="
-  //     todo-form"
-  //   >
-  //     <div className="row">
-  //       <div className="col-xs-12 col-sm-9 col-md-10">
-  //         <input
-  //           id="description"
-  //           className="form-control"
-  //           placeholder="Add a task"
-  //         />
-  //       </div>
-
-  //       <div className="col-xs-12 col-sm-3 col-md-2">
-  //         <button className="btn btn-primary">
-  //           <FontAwesomeIcon icon={faPlus}></FontAwesomeIcon>
-  //         </button>
-  //       </div>
-  //     </div>
-  //   </div>
-// );
+export default connect(mapStateToProps, mapDispatchToProps) (TodoForm)
